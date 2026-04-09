@@ -174,4 +174,4 @@ Posibles mejoras para el proyecto:
 # 📄 Licencia
 
 Este proyecto fue desarrollado con fines educativos.
-
+- Proyecto impulsado con IA para el curso: AI Training for Software Developer Graduates v2 - Spanish - 2026

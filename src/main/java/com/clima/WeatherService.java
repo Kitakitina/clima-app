@@ -12,6 +12,27 @@ import org.json.JSONObject;
 
 public class WeatherService {
 
+/**
+ * Obtiene y muestra el clima actual de una ciudad utilizando la API de Open-Meteo.
+ *
+ * El método realiza los siguientes pasos:
+ * 1. Valida que el nombre de la ciudad ingresado por el usuario no esté vacío.
+ * 2. Utiliza la API de geocodificación de Open-Meteo para convertir el nombre
+ *    de la ciudad en coordenadas geográficas (latitud y longitud).
+ * 3. Consulta la API de pronóstico para obtener el clima actual usando esas coordenadas.
+ * 4. Muestra en consola la temperatura, velocidad del viento y la condición climática.
+ *
+ * Casos manejados por la función:
+ * - Si la ciudad está vacía o es inválida, se muestra un mensaje de error.
+ * - Si la ciudad no existe en la API, se informa que no fue encontrada.
+ * - Si ocurre un problema de conexión con la API, se muestra un mensaje de error.
+ *
+ * Ejemplo de uso:
+ * WeatherService.obtenerClima("Santiago");
+ *
+ * @param ciudad Nombre de la ciudad ingresada por el usuario.
+ */
+
     public static void obtenerClima(String ciudad) {
 
         // Validar entrada del usuario
@@ -23,6 +44,16 @@ public class WeatherService {
         try {
             // Codificar ciudad para evitar problemas con espacios o caracteres especiales
             String ciudadCodificada = URLEncoder.encode(ciudad.trim(), StandardCharsets.UTF_8);
+
+/**
+ * Realiza una solicitud HTTP GET a una URL y devuelve la respuesta de la API.
+ *
+ * Este método se utiliza para consultar las APIs de Open-Meteo.
+ * Maneja errores de conexión y respuestas HTTP inválidas.
+ *
+ * @param urlString URL de la API que se desea consultar.
+ * @return La respuesta de la API en formato String, o null si ocurre un error.
+ */
 
             // 1️⃣ Obtener coordenadas desde la API de geocodificación
             String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name=" + ciudadCodificada;
