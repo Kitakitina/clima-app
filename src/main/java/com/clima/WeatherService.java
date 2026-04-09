@@ -14,20 +14,24 @@ public class WeatherService {
 
     public static void obtenerClima(String ciudad) {
 
+        // Validar entrada del usuario
         if (ciudad == null || ciudad.trim().isEmpty()) {
             System.out.println("Debes ingresar una ciudad válida ❌");
             return;
         }
 
         try {
-            // 🔹 Codificar ciudad (evita errores con espacios o acentos)
-            String ciudadCodificada = URLEncoder.encode(ciudad, StandardCharsets.UTF_8);
+            // Codificar ciudad para evitar problemas con espacios o caracteres especiales
+            String ciudadCodificada = URLEncoder.encode(ciudad.trim(), StandardCharsets.UTF_8);
 
-            // 1. Geocoding
+            // 1️⃣ Obtener coordenadas desde la API de geocodificación
             String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name=" + ciudadCodificada;
             String geoResponse = getApiResponse(geoUrl);
 
-            if (geoResponse == null) return;
+            if (geoResponse == null) {
+                System.out.println("No se pudo obtener información de la ciudad ❌");
+                return;
+            }
 
             JSONObject geoJson = new JSONObject(geoResponse);
 
@@ -37,39 +41,43 @@ public class WeatherService {
             }
 
             JSONObject location = geoJson.getJSONArray("results").getJSONObject(0);
-            double lat = location.getDouble("latitude");
-            double lon = location.getDouble("longitude");
+            double latitud = location.getDouble("latitude");
+            double longitud = location.getDouble("longitude");
 
-            // 2. Weather (usa coordenadas ✔)
+            // 2️⃣ Obtener clima usando las coordenadas
             String climaUrl = "https://api.open-meteo.com/v1/forecast?latitude="
-                    + lat + "&longitude=" + lon + "&current_weather=true";
+                    + latitud + "&longitude=" + longitud + "&current_weather=true";
 
             String climaResponse = getApiResponse(climaUrl);
 
-            if (climaResponse == null) return;
+            if (climaResponse == null) {
+                System.out.println("No se pudo obtener el clima desde la API ❌");
+                return;
+            }
 
             JSONObject climaJson = new JSONObject(climaResponse);
 
             if (!climaJson.has("current_weather")) {
-                System.out.println("No se pudo obtener el clima ❌");
+                System.out.println("La API no devolvió datos del clima ❌");
                 return;
             }
 
-            JSONObject current = climaJson.getJSONObject("current_weather");
+            JSONObject climaActual = climaJson.getJSONObject("current_weather");
 
-            double temperatura = current.optDouble("temperature", Double.NaN);
-            double viento = current.optDouble("windspeed", Double.NaN);
-            int codigo = current.optInt("weathercode", -1);
+            double temperatura = climaActual.optDouble("temperature", Double.NaN);
+            double viento = climaActual.optDouble("windspeed", Double.NaN);
+            int codigoClima = climaActual.optInt("weathercode", -1);
 
-            String descripcion = traducirCodigoClima(codigo);
+            String descripcion = traducirCodigoClima(codigoClima);
 
+            // Mostrar resultados
             System.out.println("\nClima en " + ciudad + ":");
             System.out.println("Temperatura: " + temperatura + "°C");
             System.out.println("Viento: " + viento + " km/h");
             System.out.println("Condición: " + descripcion);
 
         } catch (Exception e) {
-            System.out.println("Error inesperado: " + e.getMessage());
+            System.out.println("Ocurrió un error inesperado al obtener el clima ❌");
         }
     }
 
@@ -79,7 +87,7 @@ public class WeatherService {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(5000); // ⏱️ tiempo máximo conexión
+            conn.setConnectTimeout(5000);
             conn.setReadTimeout(5000);
 
             int status = conn.getResponseCode();
