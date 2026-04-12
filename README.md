@@ -1,141 +1,147 @@
 # 🌤️ Clima App (Java + Open-Meteo)
 
-## 👩‍💻 Autora
-
-**Camila Reyes**
-
----
-
-# 📌 Resumen del Proyecto
-
-Clima App es una aplicación de consola desarrollada en Java que permite consultar el clima actual de una ciudad ingresada por el usuario.
-
-La aplicación utiliza la API de Open-Meteo para:
-
-1. Obtener las coordenadas geográficas (latitud y longitud) de una ciudad mediante la API de geocodificación.
-2. Consultar el clima actual usando esas coordenadas.
-3. Mostrar información meteorológica como temperatura, velocidad del viento y condición del clima.
-
-El proyecto fue desarrollado utilizando Maven para la gestión de dependencias y estructura del proyecto.
+## 👩‍💻 Autora  
+Camila Reyes  
 
 ---
 
-# ⚙️ Instrucciones de Instalación
+## 📌 Resumen del Proyecto  
+Clima App es una aplicación desarrollada en Java que permite consultar el clima de una ciudad ingresada por el usuario.
 
-### 1️⃣ Clonar el repositorio
+La aplicación incluye:
 
+- Consulta del **clima actual**
+- **Pronóstico de 3 a 5 días**
+- **Sistema de caché** para mejorar rendimiento
+- **Interfaz gráfica básica (Swing)**
+
+Utiliza la API de Open-Meteo para:
+
+- Obtener coordenadas (latitud y longitud)  
+- Consultar datos meteorológicos  
+
+El proyecto está estructurado con Maven.
+
+---
+
+## ⚙️ Instrucciones de Instalación  
+
+### 1️⃣ Clonar el repositorio  
 ```bash
 git clone https://github.com/Kitakitina/clima-app.git
 ```
 
-### 2️⃣ Entrar al proyecto
-
+### 2️⃣ Entrar al proyecto  
 ```bash
 cd clima-app
 ```
 
-### 3️⃣ Compilar el proyecto
-
-El proyecto utiliza Maven, por lo que debes tener Maven instalado.
-
+### 3️⃣ Compilar el proyecto  
 ```bash
 mvn clean install
 ```
 
 ---
 
-# ▶️ Guía de Uso
+## ▶️ Guía de Uso  
 
-Para ejecutar la aplicación:
-
+### 🔹 Ejecutar versión consola  
 ```bash
 mvn exec:java -Dexec.mainClass="com.clima.App"
 ```
 
-Luego el programa solicitará que ingreses una ciudad.
-
-Ejemplo:
-
+### 🔹 Ejecutar interfaz gráfica  
+```bash
+mvn exec:java -Dexec.mainClass="com.clima.AppGUI"
 ```
-Ingresa una ciudad: Santiago
-```
-
-La aplicación consultará la API y mostrará el clima actual.
 
 ---
 
-# 💻 Ejemplo de Resultados
+## 💻 Ejemplo de Resultados  
 
-Ejemplo de ejecución:
-
-```
+### Consola:
+```bash
 Ingresa una ciudad: Santiago
 
 Clima en Santiago:
-Temperatura: 22°C
-Viento: 10 km/h
+Temperatura: 27°C
+Viento: 7 km/h
 Condición: Despejado ☀️
+
+Pronóstico:
+2026-04-12 | Max: 27°C | Min: 12°C | Despejado ☀️
+2026-04-13 | Max: 25°C | Min: 11°C | Parcialmente nublado ⛅
+```
+
+### Caché:
+```bash
+⚡ Usando datos en caché...
 ```
 
 ---
 
-# 🚀 Funcionalidades
+## 🚀 Funcionalidades  
 
-* Consulta del clima actual por nombre de ciudad
-* Conversión automática de ciudad a coordenadas (latitud y longitud)
-* Integración con la API de Open-Meteo
-* Traducción del código meteorológico a descripción legible
-* Manejo de errores para entradas inválidas
-* Validación de entrada del usuario
-* Manejo de errores de conexión con la API
-* Estructura modular separando lógica y aplicación (`WeatherService`)
-
----
-
-# ⚠️ Manejo de Errores
-
-La aplicación incluye varias validaciones para evitar fallos:
-
-* ❌ Ciudad vacía o inválida
-* ❌ Ciudad que no existe en la API
-* ❌ Errores de conexión con la API
-* ❌ Respuestas incompletas del servicio
-
-En estos casos se muestran mensajes claros al usuario sin que el programa se detenga inesperadamente.
+- Consulta del clima actual  
+- Pronóstico de varios días  
+- Conversión de ciudad a coordenadas  
+- Integración con Open-Meteo  
+- Traducción de códigos meteorológicos  
+- Caché en memoria (mejora rendimiento)  
+- Interfaz gráfica simple  
+- Validación de entrada  
+- Manejo de errores  
 
 ---
 
-# 🌐 Información de la API
+## ⚠️ Manejo de Errores  
 
-Esta aplicación utiliza la API gratuita de Open-Meteo.
+- ❌ Ciudad vacía  
+- ❌ Ciudad no encontrada  
+- ❌ Error de conexión  
+- ❌ Respuesta inválida de la API  
 
-### Geocoding API
+Se muestran mensajes claros sin detener la aplicación.
 
-Permite obtener latitud y longitud a partir de un nombre de ciudad.
+---
 
-Ejemplo de endpoint:
+## ⚡ Uso de Caché  
 
+- Guarda resultados en memoria  
+- Evita llamadas repetidas a la API  
+- Expira después de 1 hora  
+
+Ejemplo:
+```bash
+⚡ Usando datos en caché...
 ```
+
+---
+
+## 🌐 Información de la API  
+
+### Geocoding API  
+```bash
 https://geocoding-api.open-meteo.com/v1/search?name=Santiago
 ```
 
-### Weather API
+### Weather API  
 
-Obtiene datos meteorológicos usando coordenadas.
-
-Ejemplo:
-
-```
-https://api.open-meteo.com/v1/forecast?latitude=-33.45&longitude=-70.66&current_weather=true
+Clima actual:
+```bash
+&current=temperature_2m,windspeed_10m,weathercode
 ```
 
-Documentación oficial:
+Pronóstico:
+```bash
+&daily=temperature_2m_max,temperature_2m_min,weathercode
+```
 
-https://open-meteo.com/
+Documentación: https://open-meteo.com/
 
 ---
 
-# 📁 Estructura del Proyecto
+## 📁 Estructura del Proyecto  
 
 ```
 clima-app
@@ -150,28 +156,30 @@ clima-app
             └── com
                 └── clima
                     ├── App.java
+                    ├── AppGUI.java
                     └── WeatherService.java
 ```
 
-* **App.java** → interacción con el usuario
-* **WeatherService.java** → lógica de consulta a la API
+- `App.java` → consola  
+- `AppGUI.java` → interfaz gráfica  
+- `WeatherService.java` → lógica + API + caché  
 
 ---
 
-# 🔮 Mejoras Futuras
+## 🔮 Mejoras Futuras  
 
-Posibles mejoras para el proyecto:
-
-* Obtener ubicación automática del usuario
-* Agregar pronóstico de varios días
-* Crear una interfaz gráfica
-* Guardar historial de consultas
-* Implementar pruebas unitarias con JUnit
-* Mejorar el manejo de errores y logs
+- Ubicación automática  
+- Mejorar interfaz gráfica  
+- Caché persistente  
+- Historial de búsquedas  
+- Soporte °C / °F  
+- Tests con JUnit  
 
 ---
 
-# 📄 Licencia
+## 📄 Licencia  
 
-Este proyecto fue desarrollado con fines educativos.
-- Proyecto impulsado con IA para el curso: AI Training for Software Developer Graduates v2 - Spanish - 2026
+Proyecto con fines educativos.
+
+Curso:  
+**AI Training for Software Developer Graduates v2 - 2026**
