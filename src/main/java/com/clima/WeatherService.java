@@ -60,10 +60,11 @@ public class WeatherService {
                 double latitud = location.getDouble("latitude");
                 double longitud = location.getDouble("longitude");
 
-                // 🔹 Clima optimizado
+             // 🔹 Clima optimizado (pronóstico)
                 String climaUrl = "https://api.open-meteo.com/v1/forecast?latitude="
                         + latitud + "&longitude=" + longitud
-                        + "&current=temperature_2m,windspeed_10m,weathercode";
+                        + "&daily=temperature_2m_max,temperature_2m_min,weathercode"
+                        + "&timezone=auto";
 
                 String climaResponse = getApiResponse(climaUrl);
 
@@ -73,28 +74,37 @@ public class WeatherService {
 
                 // 🔹 Guardar en caché
                 saveToCache(cacheKey, climaResponse);
-            }
+                }
 
-            if (!climaJson.has("current")) {
-                System.out.println("La API no devolvió datos del clima ❌");
-                return;
-            }
+                // 🔹 VALIDAR DAILY (ya no current ❗)
+                if (!climaJson.has("daily")) {
+                    System.out.println("La API no devolvió datos del clima ❌");
+                    return;
+                }
 
-            JSONObject climaActual = climaJson.getJSONObject("current");
+                // 🔹 Obtener datos del pronóstico
+                JSONObject daily = climaJson.getJSONObject("daily");
 
-            double temperatura = climaActual.optDouble("temperature_2m", Double.NaN);
-            double viento = climaActual.optDouble("windspeed_10m", Double.NaN);
-            int codigoClima = climaActual.optInt("weathercode", -1);
+                var fechas = daily.getJSONArray("time");
+                var tempMax = daily.getJSONArray("temperature_2m_max");
+                var tempMin = daily.getJSONArray("temperature_2m_min");
+                var codigos = daily.getJSONArray("weathercode");
 
-            String descripcion = traducirCodigoClima(codigoClima);
+                System.out.println("\nPronóstico en " + ciudad + ":");
 
-            System.out.println("\nClima en " + ciudad + ":");
-            System.out.println("Temperatura: " + temperatura + "°C");
-            System.out.println("Viento: " + viento + " km/h");
-            System.out.println("Condición: " + descripcion);
+                // 🔹 Mostrar 3 a 5 días
+                for (int i = 0; i < Math.min(5, fechas.length()); i++) {
+                    String fecha = fechas.getString(i);
+                    double max = tempMax.getDouble(i);
+                    double min = tempMin.getDouble(i);
+                    int codigo = codigos.getInt(i);
 
-        } catch (Exception e) {
-            System.out.println("Ocurrió un error inesperado ❌");
+                    String descripcion = traducirCodigoClima(codigo);
+
+                    System.out.println(fecha + " | Max: " + max + "°C | Min: " + min + "°C | " + descripcion);
+                }
+            } catch (Exception e) {
+            System.out.println("Ocurrió un error al procesar la información ❌");
         }
     }
 
