@@ -6,12 +6,20 @@ public class App {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingresa ciudades separadas por coma: ");
+        String input = scanner.nextLine();
 
-        System.out.print("Ingresa una ciudad: ");
-        String ciudad = scanner.nextLine();
+        String[] ciudades = input.split(",");
 
-        WeatherService.obtenerClima(ciudad); 
+        for (String ciudad : ciudades) {
 
+            String ciudadLimpia = ciudad.trim(); 
+
+            if (!ciudadLimpia.isEmpty()) { // VALIDACION EXTRA
+                System.out.println("\n=========================");
+                WeatherService.obtenerClima(ciudadLimpia);
+            }
+        }
         scanner.close();
     }
 }
