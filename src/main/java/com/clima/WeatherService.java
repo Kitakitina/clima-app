@@ -77,7 +77,7 @@ public class WeatherService {
 
             // 2️⃣ Obtener clima usando las coordenadas
             String climaUrl = "https://api.open-meteo.com/v1/forecast?latitude="
-                    + latitud + "&longitude=" + longitud + "&current_weather=true";
+                    + latitud + "&longitude=" + longitud + "&current=temperature_2m,windspeed_10m,weathercode";
 
             String climaResponse = getApiResponse(climaUrl);
 
@@ -88,15 +88,15 @@ public class WeatherService {
 
             JSONObject climaJson = new JSONObject(climaResponse);
 
-            if (!climaJson.has("current_weather")) {
+            if (!climaJson.has("current")) {
                 System.out.println("La API no devolvió datos del clima ❌");
                 return;
             }
 
-            JSONObject climaActual = climaJson.getJSONObject("current_weather");
+            JSONObject climaActual = climaJson.getJSONObject("current");
 
-            double temperatura = climaActual.optDouble("temperature", Double.NaN);
-            double viento = climaActual.optDouble("windspeed", Double.NaN);
+            double temperatura = climaActual.optDouble("temperature_2m", Double.NaN);
+            double viento = climaActual.optDouble("windspeed_10m", Double.NaN);
             int codigoClima = climaActual.optInt("weathercode", -1);
 
             String descripcion = traducirCodigoClima(codigoClima);
@@ -152,10 +152,23 @@ public class WeatherService {
             case 0 -> "Despejado ☀️";
             case 1, 2, 3 -> "Parcialmente nublado ⛅";
             case 45, 48 -> "Niebla 🌫️";
+
             case 51, 53, 55 -> "Llovizna 🌧️";
+            case 56, 57 -> "Llovizna helada 🌧️❄️";
+
             case 61, 63, 65 -> "Lluvia 🌧️";
+            case 66, 67 -> "Lluvia helada 🌧️❄️";
+
             case 71, 73, 75 -> "Nieve ❄️";
-            default -> "Clima desconocido";
+            case 77 -> "Granizo ❄️";
+
+            case 80, 81, 82 -> "Chubascos 🌧️";
+            case 85, 86 -> "Chubascos de nieve ❄️";
+
+            case 95 -> "Tormenta eléctrica ⛈️";
+            case 96, 99 -> "Tormenta con granizo ⛈️";
+
+            default -> "Clima desconocido (" + codigo + ")";
         };
     }
 }
